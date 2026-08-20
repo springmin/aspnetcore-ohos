@@ -167,8 +167,35 @@ qemu-aarch64 -L /tmp/ohos-qemu-root -E LD_PRELOAD=/tmp/arc4shim3.so \
 - 验证: qemu-aarch64 完整运行 `dotnet --info` → RID `linux-ohos-arm64` + 两个共享框架均识别
 - 与 runtime 对比: aspnetcore 侧无 native 编译，仅 RID 管线 + 版本对齐 + 图注入，5 个问题（vs runtime 43 个），总耗时 4 小时（含 restore）
 
+## Release 打包（2026-08-20）✅
+
+**完整 release 构建**: `./eng/build.sh --os-name linux-ohos --arch arm64 -c Release --all --pack --no-build-nodejs` + 前述参数（PublicBaseURL/PublishReadyToRun=false/NativeAotSupported=false/RestoreAdditionalProjectSources/RuntimeIdentifierGraphPath）
+
+**产物统计**: 197 个 nupkg + 2 个 tarball（`artifacts/packages/Release/Shipping/`）
+
+核心 ohos 产物（已拷贝至 `~/aspnetcore-ohos-release-11.0.0-dev/`）:
+- `Microsoft.AspNetCore.App.Runtime.linux-ohos-arm64.11.0.0-dev.nupkg` (4.5MB)
+- `Microsoft.AspNetCore.App.Runtime.linux-ohos-arm64.11.0.0-dev.symbols.nupkg` (8MB)
+- `aspnetcore-runtime-11.0.0-dev-linux-ohos-arm64.tar.gz` (19.4MB, 137 个 App 程序集 + 完整 runtime 布局)
+- `aspnetcore-targeting-pack-11.0.0-dev-linux-ohos-arm64.tar.gz` (5.6MB, App.Ref 参考包)
+
+**release 验证**: qemu-aarch64 运行最新 tarball → `dotnet --info` 输出 RID `linux-ohos-arm64`，两个共享框架加载 ✅
+
+### 问题 6: NETSDK1047 (tools 项目全 RID restore 缺失)
+- **现象**: `--all` 打包时 3 个 tools 项目（dotnet-dev-certs/user-jwts/user-secrets）报 `NETSDK1047: Assets file doesn't have a target for 'net11.0/win-x86'` 等（33 处）
+- **根因**: tools 的 `RuntimeIdentifiers=$(BundledToolTargetRuntimeIdentifiers)` 是全 RID 列表，但 restore 只做了 `--os-name linux-ohos` 单 RID——跨 RID assets 缺失
+- **方案**: 与 ohos release 无关（tools 是 host 工具，NativeAOT 已禁）——忽略此错误，MSBuild 并行继续打包其余 197 个包；tools 打包留待 Phase 2 配 NDK sysroot 后全 RID restore
+- **结果**: 已规避（不影响共享框架/nupkg/tarball 产物）
+
+### 问题 7: /tmp 清理导致资产丢失 + HTTP 服务进程回收
+- **现象**: 重启 release 构建时 `/tmp/ohos-assets`、`/tmp/ohos-nuget-feed` 被系统清理，HTTP 服务进程被 shell 会话回收
+- **根因**: /tmp 非持久 + nohup/setsid 后台进程在 shell 退出后被回收
+- **方案**: 重建资产（拷贝 tarball 改名 + 重打包 4 个 nupkg）；tarball 下载改走 `_DownloadAndExtractDotNetRuntime` 的 `!Exists()` 短路——直接预置 `artifacts/obj/aspnetcore-runtime*/dotnet-runtime-*.tar.gz` 跳过 HTTP；HTTP 服务用独立 python 进程（如需再次下载）
+- **结果**: 已解决
+
 ## 遗留事项（Phase 2 候选）
 
-1. NativeAOT 工具（dotnet-dev-certs/user-secrets/user-jwts）发布到 linux-ohos-arm64——需 OHOS NDK clang+sysroot，配置 `BundledToolTargetRuntimeIdentifiers`
+1. NativeAOT 工具（dotnet-dev-certs/user-secrets/user-jwts）发布到 linux-ohos-arm64——需 OHOS NDK clang+sysroot，配置 `BundledToolTargetRuntimeIdentifiers` + 全 RID restore
 2. R2R（ReadyToRun）——需 runtime 提供 ohos PGO 数据（mibc）或接受 linux-x64 mibc fallback；当前纯 IL
 3. CI 集成——新增 ohos 构建腿（容器镜像 + azureLinuxCrossArm64 模式）
+4. tools 项目（dotnet-dev-certs 等）的 NETSDK1047 全 RID restore
