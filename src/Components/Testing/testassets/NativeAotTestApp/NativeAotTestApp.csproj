@@ -16,7 +16,8 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(E2ECompileTestHarness)' == 'true'">
-    <PublishAot>true</PublishAot>
+    <!-- E2E NativeAOT harness is not supported on ohos (toolchain not wired up). -->
+    <PublishAot Condition="'$(TargetRuntimeIdentifier)' == '' or !$(TargetRuntimeIdentifier.StartsWith('ohos-'))">true</PublishAot>
     <SelfContained>true</SelfContained>
   </PropertyGroup>
 

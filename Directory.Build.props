@@ -99,6 +99,17 @@
   <Import Project="eng\QuarantinedTests.AfterArcade.props" />
   <Import Project="eng\Common.props" />
 
+  <!--
+    The OHOS NativeAOT toolchain is not wired into this repo's build; any project targeting
+    ohos (dev-certs/user-jwts/user-secrets/aspnetcoretools, NativeAotTestApp, etc.) would set
+    RuntimeIdentifier=ohos-* and fail the AOT restore/link. Match the SDK's dotnet-aot exclusion.
+    This must be set before the vendored NativeAotSupported.props (whose Condition is '== ''').
+  -->
+  <PropertyGroup Condition="'$(TargetOsName)' == 'ohos'">
+    <NativeAotSupported>false</NativeAotSupported>
+  </PropertyGroup>
+
+
   <PropertyGroup>
     <Product>Microsoft ASP.NET Core</Product>
     <StrongNameKeyId>MicrosoftAspNetCore</StrongNameKeyId>
