@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/dotnet-js-interop",
-  "version": "11.0.0-dev",
+  "version": "11.0.0-rc.1.26451.1",
   "description": "Provides abstractions and features for interop between .NET and JavaScript code.",
   "main": "dist/src/Microsoft.JSInterop.js",
   "types": "dist/src/Microsoft.JSInterop.d.ts",
