@@ -1,12 +1,12 @@
 # PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-08-18
-**Commit:** 32a138c92c
-**Branch:** main
+**Generated:** 2026-09-15
+**Commit:** 9dd9b6371b
+**Branch:** feature/openharmony
 
 ## OVERVIEW
 
-`aspnetcore-ohos`: fork of upstream `dotnet/aspnetcore` (main, .NET 11 preview era) intended as the base for an OpenHarmony (OHOS) port. **The tree currently contains ZERO OHOS-specific code** — it is a pristine 1:1 mirror of upstream at commit `32a138c92c` (Aug 2026). No OHOS TFM/RID, no `#if OHOS`, no harmony NuGet feed, no hvigor/ohpm/DevEco build files exist yet. Verify with: `grep -ri "openharmony\|ohos" --include="*.cs" --include="*.props" --include="*.targets" .`
+`aspnetcore-ohos`: fork of upstream `dotnet/aspnetcore` (main, .NET 11 preview era) carrying the OpenHarmony (OHOS) port on `feature/openharmony`: `openharmony-x64`/`openharmony-arm64` entries in the RID lists (`Directory.Build.props`, `src/Tools/Directory.Build.props`, `eng/Dependencies.props`), repo-wide `NativeAotSupported=false` for OHOS targets (keyed on the RID), and `PublishAot` guards in the E2E test assets. The build/CI host is still Linux; there is no OHOS TFM or native Kestrel transport yet.
 
 Stack: C# / .NET 11 (`net11.0`), Arcade build, `AspNetCore.slnx` (XML solution), CI in Azure DevOps.
 
@@ -52,7 +52,7 @@ Stack: C# / .NET 11 (`net11.0`), Arcade build, `AspNetCore.slnx` (XML solution),
 - **Tests**: `src/<Area>/test/*.Tests.csproj`; framework is xunit v3 + Moq injected centrally via `eng/targets/CSharp.Common.props` — NEVER add xunit/MSTest packages to a unit-test csproj. MSTest only in Components.Testing E2E infra.
 - **Per-area build**: `src/<Area>/build.sh` (add `-test`). Repo-level: `./eng/build.sh -all -pack -arch x64`.
 - **Bootstrap**: `source activate.sh` before ANY `dotnet` command; `./restore.sh` installs local SDK to `.dotnet/`.
-- **TFM**: `net11.0` (`$(DefaultNetCoreTargetFramework)`); `SupportedRuntimeIdentifiers` at `Directory.Build.props:~177` (no ohos RID — port must add one).
+- **TFM**: `net11.0` (`$(DefaultNetCoreTargetFramework)`); `SupportedRuntimeIdentifiers` at `Directory.Build.props` (openharmony-x64/arm64 added for the port).
 - **Style**: file-scoped namespaces, `var` everywhere, braces always, throw expressions DISALLOWED, `_camelCase` private fields, XML docs required for shipping code (`.editorconfig`, `.globalconfig`).
 - **NuGet**: dnceng Azure DevOps feeds only — `nuget.org` is NOT a package source.
 - **Versions**: darc dependency flow — never hand-edit `eng/Version.Details.xml`/`Versions.props`.
@@ -71,7 +71,7 @@ Stack: C# / .NET 11 (`net11.0`), Arcade build, `AspNetCore.slnx` (XML solution),
 
 ## UNIQUE STYLES
 
-- **OHOS port status**: not started in this tree. When porting, expected insertion points: add RID to `Directory.Build.props` `SupportedRuntimeIdentifiers`; `TargetOsName`/`TargetRuntimeIdentifier` branch in `eng/Common.props`; new Kestrel transport under `src/Servers/Kestrel/Transport.*`; OHOS native module under `eng/`; `#if OHOS` symbols; harmony NuGet feed in `NuGet.config`.
+- **OHOS port status**: in progress on `feature/openharmony`. Done: openharmony RID lists, RID-keyed `NativeAotSupported=false`, E2E `PublishAot` guards. Not yet: OHOS TFM, native Kestrel transport, harmony NuGet feed.
 - **src/Shared/** = shared-source pattern: internal code compiled into multiple assemblies + `runtime/` files copied from dotnet/runtime (see `src/Shared/AGENTS.md`).
 
 ## COMMANDS

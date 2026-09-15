@@ -109,7 +109,6 @@
     <NativeAotSupported>false</NativeAotSupported>
   </PropertyGroup>
 
-
   <PropertyGroup>
     <Product>Microsoft ASP.NET Core</Product>
     <StrongNameKeyId>MicrosoftAspNetCore</StrongNameKeyId>
