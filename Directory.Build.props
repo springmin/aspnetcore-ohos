@@ -105,7 +105,7 @@
     RuntimeIdentifier=openharmony-* and fail the AOT restore/link. Match the SDK's dotnet-aot exclusion.
     This must be set before the vendored NativeAotSupported.props (whose Condition is '== ''').
   -->
-  <PropertyGroup Condition="'$(TargetOsName)' == 'openharmony'">
+  <PropertyGroup Condition="'$(TargetOsName)' == 'openharmony' or $(RuntimeIdentifier.StartsWith('openharmony-')) or $(TargetRuntimeIdentifier.StartsWith('openharmony-'))">
     <NativeAotSupported>false</NativeAotSupported>
   </PropertyGroup>
 
