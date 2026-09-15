@@ -99,6 +99,17 @@
   <Import Project="eng\QuarantinedTests.AfterArcade.props" />
   <Import Project="eng\Common.props" />
 
+  <!--
+    openharmony is not a NativeAOT target in this repo. The vendored NativeAotSupported.props
+    (imported by src/Tools) rejects only browser/haiku/illumos/netbsd/solaris, so the bundled tools
+    (dotnet-dev-certs/user-jwts/user-secrets/aspnetcoretools) and the E2E AOT harnesses would set
+    RuntimeIdentifier=openharmony-* and fail the AOT restore/link. No '== ''' guard here, so this
+    also wins under src/Tools, which imports the vendored file first.
+  -->
+  <PropertyGroup Condition="'$(TargetOsName)' == 'openharmony' or $(RuntimeIdentifier.StartsWith('openharmony-')) or $(TargetRuntimeIdentifier.StartsWith('openharmony-'))">
+    <NativeAotSupported>false</NativeAotSupported>
+  </PropertyGroup>
+
   <PropertyGroup>
     <Product>Microsoft ASP.NET Core</Product>
     <StrongNameKeyId>MicrosoftAspNetCore</StrongNameKeyId>
@@ -174,7 +185,7 @@
 
     <!-- This defines the list of RIDs supported by the ASP.NET Core shared framework.
          The list is a semicolon separated list of RIDs. Whitespace may not be added to the property. -->
-    <SupportedRuntimeIdentifiers>win-x64;win-x86;win-arm;win-arm64;osx-x64;osx-arm64;linux-musl-x64;linux-musl-arm;linux-musl-arm64;linux-x64;linux-arm;linux-arm64;linux-riscv64;linux-musl-riscv64;linux-loongarch64;linux-musl-loongarch64;freebsd-x64;freebsd-arm64;openbsd-x64;openbsd-arm64;illumos-x64;solaris-x64;haiku-x64;</SupportedRuntimeIdentifiers>
+    <SupportedRuntimeIdentifiers>win-x64;win-x86;win-arm;win-arm64;osx-x64;osx-arm64;linux-musl-x64;linux-musl-arm;linux-musl-arm64;linux-x64;linux-arm;linux-arm64;linux-riscv64;linux-musl-riscv64;linux-loongarch64;linux-musl-loongarch64;openharmony-x64;openharmony-arm64;freebsd-x64;freebsd-arm64;openbsd-x64;openbsd-arm64;illumos-x64;solaris-x64;haiku-x64;</SupportedRuntimeIdentifiers>
     <SupportedRuntimeIdentifiers Condition=" '$(DotNetBuildSourceOnly)' == 'true' ">$(SupportedRuntimeIdentifiers);$(TargetRuntimeIdentifier)</SupportedRuntimeIdentifiers>
 
     <!-- Playwright provides binaries for Windows (x86 and x64), macOS (x64) and Linux (x64, non musl). We can't use it on other architectures. -->
