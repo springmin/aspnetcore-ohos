@@ -119,7 +119,6 @@ may be turned into `<PackageReference>` items in projects.
     <_LatestRuntimePackageReference Include="Microsoft.NETCore.App.Runtime.linux-musl-arm" />
     <_LatestRuntimePackageReference Include="Microsoft.NETCore.App.Runtime.linux-musl-arm64" />
     <_LatestRuntimePackageReference Include="Microsoft.NETCore.App.Runtime.openharmony-x64" />
-    <_LatestRuntimePackageReference Include="Microsoft.NETCore.App.Runtime.openharmony-arm" />
     <_LatestRuntimePackageReference Include="Microsoft.NETCore.App.Runtime.openharmony-arm64" />
     <_LatestRuntimePackageReference Include="Microsoft.NETCore.App.Runtime.freebsd-x64" />
     <_LatestRuntimePackageReference Include="Microsoft.NETCore.App.Runtime.freebsd-arm64" />
@@ -144,7 +143,6 @@ may be turned into `<PackageReference>` items in projects.
     <_LatestRuntimePackageReference Include="Microsoft.NETCore.App.Crossgen2.linux-musl-arm" />
     <_LatestRuntimePackageReference Include="Microsoft.NETCore.App.Crossgen2.linux-musl-arm64" />
     <_LatestRuntimePackageReference Include="Microsoft.NETCore.App.Crossgen2.openharmony-x64" />
-    <_LatestRuntimePackageReference Include="Microsoft.NETCore.App.Crossgen2.openharmony-arm" />
     <_LatestRuntimePackageReference Include="Microsoft.NETCore.App.Crossgen2.openharmony-arm64" />
     <_LatestRuntimePackageReference Include="Microsoft.NETCore.App.Crossgen2.freebsd-x64" />
     <_LatestRuntimePackageReference Include="Microsoft.NETCore.App.Crossgen2.freebsd-arm64" />
