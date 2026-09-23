@@ -6,7 +6,7 @@
 
 ## OVERVIEW
 
-`aspnetcore-ohos`: fork of upstream `dotnet/aspnetcore` (main, .NET 11 preview era) carrying the OpenHarmony (OHOS) port on `feature/openharmony`: `openharmony-x64`/`openharmony-arm64` entries in the RID lists (`Directory.Build.props`, `src/Tools/Directory.Build.props`, `eng/Dependencies.props`), repo-wide `NativeAotSupported=false` for OHOS targets (keyed on the RID), and `PublishAot` guards in the E2E test assets. The build/CI host is still Linux; there is no OHOS TFM or native Kestrel transport yet.
+`aspnetcore-ohos`: fork of upstream `dotnet/aspnetcore` (main, .NET 11 preview era) carrying the OpenHarmony port on `feature/openharmony`: `openharmony-x64`/`openharmony-arm64` entries in the RID lists (`Directory.Build.props`, `src/Tools/Directory.Build.props`, `eng/Dependencies.props`), repo-wide `NativeAotSupported=false` for OpenHarmony targets (keyed on the RID), and `PublishAot` guards in the E2E test assets. The build/CI host is still Linux; there is no OpenHarmony TFM or native Kestrel transport yet.
 
 Stack: C# / .NET 11 (`net11.0`), Arcade build, `AspNetCore.slnx` (XML solution), CI in Azure DevOps.
 
@@ -71,7 +71,7 @@ Stack: C# / .NET 11 (`net11.0`), Arcade build, `AspNetCore.slnx` (XML solution),
 
 ## UNIQUE STYLES
 
-- **OHOS port status**: in progress on `feature/openharmony`. Done: openharmony RID lists, RID-keyed `NativeAotSupported=false`, E2E `PublishAot` guards. Not yet: OHOS TFM, native Kestrel transport, harmony NuGet feed.
+- **OpenHarmony port status**: in progress on `feature/openharmony`. Done: openharmony RID lists, RID-keyed `NativeAotSupported=false`, E2E `PublishAot` guards. Not yet: OpenHarmony TFM, native Kestrel transport, harmony NuGet feed.
 - **src/Shared/** = shared-source pattern: internal code compiled into multiple assemblies + `runtime/` files copied from dotnet/runtime (see `src/Shared/AGENTS.md`).
 
 ## COMMANDS
@@ -93,4 +93,4 @@ git submodule update --init   # populate src/submodules before building native c
 - CI is Azure DevOps (`.azure/pipelines/ci.yml`, `ci-public.yml` for forks) — GitHub Actions workflows are triage only.
 - Local dev downloads preview .NET runtime from internal feed (CI uses `dotnetbuilds-internal` token); public mirror = `ci-public.yml`.
 - Existing upstream AGENTS.md files (do not overwrite): `eng/common/AGENTS.md`, `src/Components/AGENTS.md`, `src/Components/Testing/AGENTS.md`.
-- Native C++ tests (googletest submodule) exist only for Windows IIS ANCM — the pattern to imitate for future OHOS native tests.
+- Native C++ tests (googletest submodule) exist only for Windows IIS ANCM — the pattern to imitate for future OpenHarmony native tests.
