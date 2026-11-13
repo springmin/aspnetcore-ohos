@@ -1870,14 +1870,8 @@ public partial class HttpConnectionDispatcherTests
         }
     }
 
-    // A rejection is downgraded to "stale" when the connection's user advances while the refresh policy is
-    // awaited. That must not let the rejected request through: the poll still has to belong to the
-    // connection's identity. This path does not involve an earlier-expiring token - the competing token here
-    // expires no sooner than the connection's.
-    // The /refresh endpoint has the same "rejection downgraded to stale" shape as a poll: when the presented
-    // token never replaces the connection's principal, no refresh policy ever accepted it, so it must still
-    // belong to the connection's identity.
-    // The guard above must not reject the connection's own user when their token loses a refresh race.
+    // A same-user refresh whose token loses a race must still be accepted; only a caller who
+    // is not the connection's user is rejected.
     [Fact]
     public async Task RefreshFromSameUserStillSucceedsWhenTokenIsStale()
     {
