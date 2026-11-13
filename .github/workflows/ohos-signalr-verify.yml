@@ -11,8 +11,15 @@ name: ohos-signalr-verify
 #
 # Manual-only on purpose: a first run restores the repo toolset and is
 # expensive, and the OpenHarmony branch mostly receives upstream merges.
+# Push runs are path-filtered: only the SignalR sources, the Blazor auth test
+# assets and this workflow itself can invalidate the gate.
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - 'src/SignalR/**'
+      - 'src/Components/test/**'
+      - '.github/workflows/ohos-signalr-verify.yml'
 
 permissions:
   contents: read
