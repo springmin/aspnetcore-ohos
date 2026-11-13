@@ -46,16 +46,26 @@ jobs:
           DOTNET_CLI_TELEMETRY_OPTOUT: 1
           DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
         run: |
-          ./eng/build.sh --ci --nobl --no-build-java \
-            --projects "$PWD/src/SignalR/clients/csharp/Http.Connections.Client/src/Microsoft.AspNetCore.Http.Connections.Client.csproj%3B$PWD/src/SignalR/common/Http.Connections/test/Microsoft.AspNetCore.Http.Connections.Tests.csproj%3B$PWD/src/SignalR/clients/csharp/Client/test/UnitTests/Microsoft.AspNetCore.SignalR.Client.Tests.csproj"
+          # ProjectToBuild takes one project path per invocation. Build the
+          # client first, then the two test projects (their dependencies are
+          # restored/built incrementally).
+          for project in \
+            "$PWD/src/SignalR/clients/csharp/Http.Connections.Client/src/Microsoft.AspNetCore.Http.Connections.Client.csproj" \
+            "$PWD/src/SignalR/common/Http.Connections/test/Microsoft.AspNetCore.Http.Connections.Tests.csproj" \
+            "$PWD/src/SignalR/clients/csharp/Client/test/UnitTests/Microsoft.AspNetCore.SignalR.Client.Tests.csproj"; do
+            ./eng/build.sh --ci --nobl --no-build-java --projects "$project"
+          done
 
       - name: Run SignalR tests
         env:
           DOTNET_CLI_TELEMETRY_OPTOUT: 1
           DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
         run: |
-          ./eng/build.sh --ci --nobl --no-build --no-build-java --test \
-            --projects "$PWD/src/SignalR/common/Http.Connections/test/Microsoft.AspNetCore.Http.Connections.Tests.csproj%3B$PWD/src/SignalR/clients/csharp/Client/test/UnitTests/Microsoft.AspNetCore.SignalR.Client.Tests.csproj"
+          for project in \
+            "$PWD/src/SignalR/common/Http.Connections/test/Microsoft.AspNetCore.Http.Connections.Tests.csproj" \
+            "$PWD/src/SignalR/clients/csharp/Client/test/UnitTests/Microsoft.AspNetCore.SignalR.Client.Tests.csproj"; do
+            ./eng/build.sh --ci --nobl --no-build --no-build-java --test --projects "$project"
+          done
 
       - name: Upload build/test logs
         if: always()
@@ -93,8 +103,12 @@ jobs:
           DOTNET_CLI_TELEMETRY_OPTOUT: 1
           DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
         run: |
-          ./eng/build.sh --ci --nobl --no-build-java \
-            --projects "$PWD/src/Components/test/testassets/Components.TestServer/Components.TestServer.csproj%3B$PWD/src/Components/test/testassets/BasicTestApp/BasicTestApp.csproj%3B$PWD/src/Components/test/E2ETest/Microsoft.AspNetCore.Components.E2ETests.csproj"
+          for project in \
+            "$PWD/src/Components/test/testassets/Components.TestServer/Components.TestServer.csproj" \
+            "$PWD/src/Components/test/testassets/BasicTestApp/BasicTestApp.csproj" \
+            "$PWD/src/Components/test/E2ETest/Microsoft.AspNetCore.Components.E2ETests.csproj"; do
+            ./eng/build.sh --ci --nobl --no-build-java --projects "$project"
+          done
 
       - name: Upload build logs
         if: always()
