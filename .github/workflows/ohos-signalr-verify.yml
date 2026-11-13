@@ -47,7 +47,7 @@ jobs:
           DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
         run: |
           ./eng/build.sh --ci --nobl --no-build-java \
-            --projects "$PWD/src/SignalR/clients/csharp/Http.Connections.Client/src/Microsoft.AspNetCore.Http.Connections.Client.csproj;$PWD/src/SignalR/common/Http.Connections/test/Microsoft.AspNetCore.Http.Connections.Tests.csproj;$PWD/src/SignalR/clients/csharp/Client/test/UnitTests/Microsoft.AspNetCore.SignalR.Client.Tests.csproj"
+            --projects "$PWD/src/SignalR/clients/csharp/Http.Connections.Client/src/Microsoft.AspNetCore.Http.Connections.Client.csproj%3B$PWD/src/SignalR/common/Http.Connections/test/Microsoft.AspNetCore.Http.Connections.Tests.csproj%3B$PWD/src/SignalR/clients/csharp/Client/test/UnitTests/Microsoft.AspNetCore.SignalR.Client.Tests.csproj"
 
       - name: Run SignalR tests
         env:
@@ -55,7 +55,7 @@ jobs:
           DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
         run: |
           ./eng/build.sh --ci --nobl --no-build --no-build-java --test \
-            --projects "$PWD/src/SignalR/common/Http.Connections/test/Microsoft.AspNetCore.Http.Connections.Tests.csproj;$PWD/src/SignalR/clients/csharp/Client/test/UnitTests/Microsoft.AspNetCore.SignalR.Client.Tests.csproj"
+            --projects "$PWD/src/SignalR/common/Http.Connections/test/Microsoft.AspNetCore.Http.Connections.Tests.csproj%3B$PWD/src/SignalR/clients/csharp/Client/test/UnitTests/Microsoft.AspNetCore.SignalR.Client.Tests.csproj"
 
       - name: Upload build/test logs
         if: always()
@@ -94,7 +94,7 @@ jobs:
           DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
         run: |
           ./eng/build.sh --ci --nobl --no-build-java \
-            --projects "$PWD/src/Components/test/testassets/Components.TestServer/Components.TestServer.csproj;$PWD/src/Components/test/testassets/BasicTestApp/BasicTestApp.csproj;$PWD/src/Components/test/E2ETest/Microsoft.AspNetCore.Components.E2ETests.csproj"
+            --projects "$PWD/src/Components/test/testassets/Components.TestServer/Components.TestServer.csproj%3B$PWD/src/Components/test/testassets/BasicTestApp/BasicTestApp.csproj%3B$PWD/src/Components/test/E2ETest/Microsoft.AspNetCore.Components.E2ETests.csproj"
 
       - name: Upload build logs
         if: always()
@@ -119,17 +119,21 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install and build TS clients
+      - name: Install workspace dependencies
         run: |
-          cd src/SignalR/clients/ts
+          # npm workspaces live at the repo root; installing there provides the
+          # hoisted @types/jasmine from the FunctionalTests workspace that
+          # tsconfig.base.json requires.
           npm install --no-audit --no-fund
-          (cd signalr && npm install --no-audit --no-fund && npm run build)
-          (cd signalr-protocol-msgpack && npm install --no-audit --no-fund && npm run build)
+
+      - name: Build TS clients
+        run: |
+          npm run build --workspace @microsoft/signalr
+          npm run build --workspace @microsoft/signalr-protocol-msgpack
 
       - name: Run TS tests
         run: |
-          cd src/SignalR/clients/ts
-          npm test -- --ci
+          npm test --workspace @microsoft/client-ts -- --ci
 
       - name: Upload TS test results
         if: always()
