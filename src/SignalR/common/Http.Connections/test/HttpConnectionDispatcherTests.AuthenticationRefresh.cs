@@ -2219,10 +2219,7 @@ public partial class HttpConnectionDispatcherTests
         context.Request.Path = "/foo/refresh";
         context.Request.Method = "POST";
         context.Response.Body = new MemoryStream();
-        context.Request.Query = new QueryCollection(new Dictionary<string, StringValues>
-        {
-            ["id"] = connection.ConnectionToken,
-        });
+        context.Request.Headers[ConnectionTokenHeaderName] = connection.ConnectionToken;
         context.User = ticket.Principal;
         context.Features.Set<IAuthenticateResultFeature>(
             new TestAuthenticateResultFeature(AuthenticateResult.Success(ticket)));
