@@ -99,7 +99,7 @@ updates:
   - dependency-name: "Microsoft.CodeAnalysis.CSharp"
   - dependency-name: "Microsoft.CodeAnalysis.CSharp.Workspaces"
   - dependency-name: "Microsoft.CodeAnalysis.Common"
-  - dependency-name: "Microsoft.CodeAnalysis.ExternalAccess.AspNetCore"
+  - dependency-name: "Microsoft.CodeAnalysis.Features.ExternalAccess"
   - dependency-name: "Microsoft.DotNet.Arcade.Sdk"
   - dependency-name: "Microsoft.DotNet.Build.Tasks.Archives"
   - dependency-name: "Microsoft.DotNet.Build.Tasks.Installers"
@@ -439,6 +439,9 @@ updates:
   labels:
   - area-infrastructure
   package-ecosystem: gitsubmodule
+  # Keep fork merge commits eligible instead of selecting older upstream commits.
+  cooldown:
+    default-days: 0
   schedule:
     day: friday
     interval: weekly
@@ -453,33 +456,11 @@ updates:
   labels:
   - area-infrastructure
   package-ecosystem: gitsubmodule
+  cooldown:
+    default-days: 0
   schedule:
     interval: monthly
   target-branch: release/2.3
-- allow:
-  - dependency-type: all
-  commit-message:
-    include: scope
-    prefix: "[release/8.0] "
-  directory: /
-  labels:
-  - area-infrastructure
-  package-ecosystem: gitsubmodule
-  schedule:
-    interval: monthly
-  target-branch: release/8.0
-- allow:
-  - dependency-type: all
-  commit-message:
-    include: scope
-    prefix: "[release/9.0] "
-  directory: /
-  labels:
-  - area-infrastructure
-  package-ecosystem: gitsubmodule
-  schedule:
-    interval: monthly
-  target-branch: release/9.0
 - allow:
   - dependency-type: all
   commit-message:
@@ -489,6 +470,8 @@ updates:
   labels:
   - area-infrastructure
   package-ecosystem: gitsubmodule
+  cooldown:
+    default-days: 0
   schedule:
     interval: monthly
   target-branch: release/10.0
